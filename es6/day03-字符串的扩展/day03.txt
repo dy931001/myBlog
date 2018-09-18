@@ -1,0 +1,57 @@
+字符串的扩展：
+1.	字符串的Uniconde表示法：
+	JavaScript 允许采用\uxxxx形式表示一个字符，其中xxxx表示字符的 Unicode 码点。
+2.	codePointAt()
+	ES6 提供了codePointAt方法，能够正确处理 4 个字节储存的字符，返回一个字符的码点。
+4.	字符串的遍历器接口
+	ES6 为字符串添加了遍历器接口（详见《Iterator》一章），使得字符串可以被for...of循环遍历。
+	let s = 'lideyao';
+	for(let i of s){
+		console.log(i);
+	}
+5.	normalize()
+6.	includes(), startsWith(), endsWith()
+	传统上，JavaScript 只有indexOf方法，可以用来确定一个字符串是否包含在另一个字符串中。ES6 又提供了三种新方法。
+	includes()：返回布尔值，表示是否找到了参数字符串。
+	startsWith()：返回布尔值，表示参数字符串是否在原字符串的头部。
+	endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾部。
+7.	repeat()
+	repeat方法返回一个新字符串，表示将原字符串重复n次。
+	小数被取整，负数会报错，如果参数是 0 到-1 之间的小数，则等同于 0。参数NaN等同于 0。如果repeat的参数是字符串，则会先转换成数字。
+8.	padStart()，padEnd()
+	ES2017 引入了字符串补全长度的功能。如果某个字符串不够指定长度，会在头部或尾部补全。padStart()用于头部补全，padEnd()用于尾部补全。
+	padStart和padEnd一共接受两个参数，第一个参数用来指定字符串的最小长度，第二个参数是用来补全的字符串。
+9.	matchAll()
+	matchAll方法返回一个正则表达式在当前字符串的所有匹配。
+10.	模板字符串
+	模板字符串（template string）是增强版的字符串，用反引号（`）标识。它可以当作普通字符串使用，也可以用来定义多行字符串，或者在字符串中嵌入变量。
+	普通字符串
+	`In JavaScript '\n' is a line-feed.`
+	多行字符串
+	`In JavaScript this is
+ 	not legal.`
+ 	字符串嵌入变量
+ 	let a = 'lideyao', b = 'zhangmin';
+ 	`${a} love ${b}`
+ 	上面代码中的模板字符串，都是用反引号表示。如果在模板字符串中需要使用反引号，则前面要用反斜杠转义。
+ 	let greeting = `\`Yo\` World!`;
+ 	如果使用模板字符串表示多行字符串，所有的空格和缩进都会被保留在输出之中。
+ 	模板字符串中嵌入变量，需要将变量名写在${}之中。
+ 	大括号内部可以放入任意的 JavaScript 表达式，可以进行运算，以及引用对象属性。
+ 	模板字符串之中还能调用函数。
+ 	如果模板字符串中的变量没有声明，将报错。
+11.	实例：模板编译
+	该模板使用<%...%>放置 JavaScript 代码，使用<%= ... %>输出 JavaScript 表达式。
+	let template = `
+		<ul>
+		  <% for(let i=0; i < data.supplies.length; i++) { %>
+		    <li><%= data.supplies[i] %></li>
+		  <% } %>
+		</ul>
+		`;
+12.	标签模板
+	模板字符串的功能，不仅仅是上面这些。它可以紧跟在一个函数名后面，该函数将被调用来处理这个模板字符串。这被称为“标签模板”功能（tagged template）。
+13.	String.raw()
+	ES6 还为原生的 String 对象，提供了一个raw方法。
+	String.raw方法，往往用来充当模板字符串的处理函数，返回一个斜杠都被转义（即斜杠前面再加一个斜杠）的字符串，对应于替换变量后的模板字符串。
+

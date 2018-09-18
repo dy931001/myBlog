@@ -1,0 +1,22 @@
+对象的扩展
+
+1.	属性的简介表示法
+	ES6 允许直接写入变量和函数，作为对象的属性和方法。这样的书写更加简洁。
+2.	属性名表达式
+	JavaScript 定义对象的属性，有两种方法。
+	// 方法一
+	obj.foo = true;
+
+	// 方法二
+	obj['a' + 'bc'] = 123;
+3.	方法的name属性
+	函数的name属性，返回函数名。对象方法也是函数，因此也有name属性。
+4.	Object.is()
+	ES6 提出“Same-value equality”（同值相等）算法，用来解决这个问题。Object.is就是部署这个算法的新方法。它用来比较两个值是否严格相等，与严格比较运算符（===）的行为基本一致。
+	Object.is('foo', 'foo')
+	// true
+	Object.is({}, {})
+	// false
+5.	Object.assign()
+	
+	
