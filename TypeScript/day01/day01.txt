@@ -1,0 +1,107 @@
+
+1.  TypeScript:
+    TypeScript是　微软 开发的开源语言。是JavaScript的超集，而且本质上对JavaScript添加了可选的 静态类型 和基于 类 的面向对象编程。
+    （超集：如果一个集合S2中的每一个元素都在集合S1中，且集合S1中可能包含S2中没有的元素，则集合S1就是S2的一个超集，反过来，S2是S1的子集。 
+    S1是S2的超集，若S1中一定有S2中没有的元素，则S1是S2的真超集，反过来S2是S1的真子集。）
+
+2.  TypeScript特性：
+    TypeScript是一种给JavaScript添加特性的语言扩展：
+        .类型批注和编译时类型检查
+        .类
+        .接口
+        .模块
+        .lambda函数
+3.  创建TypeScript文件：
+    准备步骤：
+        npm install -g typescript
+        创建项目
+        使用命令npm init来创建package.json文件
+        使用tsc --init命令就可以快速创建一个tsconfig.json文件
+
+    3.1类型注解
+        TypeScript里的类型注解是一种轻量级的为函数或变量添加约束的方式。 在这个例子里，我们希望greeter函数接收一个字符串参数。
+
+        let greenter = (p:String) =>{
+            console.log('hello'+p)
+        }
+        let user = 'lideao';
+        greenter(user);
+
+    3.2接口
+        在TypeScript里，只在两个类型内部的结构兼容那么这两个类型就是兼容的。 这就允许我们在实现接口时候只要保证包含了接口要求的结构就可以，而不必明确地使用implements语句。
+        interface Person{
+            firstName : string;
+            lastName : string;
+        }
+        let p = (person:Person) => {
+            console.log('f:'+person.firstName+',l:'+person.lastName);
+        }
+        let p1 = {firstName:'li',lastName:'deyao'}
+        p(p1)
+
+    3.3类
+        class Student{
+            fullName:string;
+            constructor(public firstName:string,public middleInitial:string,public lastName:string){
+                this.fullName = this.firstName+''+this.middleInitial+''+this.lastName;
+            }
+        }
+
+        interface Person{
+            firstName:string;
+            lastName:string;
+        }
+
+        let p2 = (person:Person) => {
+            console.log('f1:'+person.firstName+',l1:'+person.lastName);
+        }
+
+        let u1 = new Student('li','M.','deyao');
+
+        p2(u1);
+
+        constructor 方法是类的默认方法，通过new命令生成对象实例时，自动调用该方法。一个类必须有 constructor 方法，如果没有显式定义，一个空的 constructor 方法会被默认添加，
+        这一点与Java的类一致。
+        类的方法内部如果含有 this ，它默认指向类的实例。但是如果我们单独将其方法提取出来， this 值可能会指向当前运行的环境。为了防止这种事情的发生，
+        我们可以使用箭头函数（箭头函数的 this 值指向初始化的函数）。
+        public、private、protected和readonly都是类的成员（属性）修饰符 
+        public:
+        在TS里，成员都默认为public。被public修饰的属性，我们在类的内外都可以自由访问到这些被定义的属性。
+        private:
+        当成员被标记成private时，它就不能在声明它的类的外部访问。
+        但是被 private 或 protected 修饰的成员类型不一样。如果其中一个类型里包含一个private (或protected)成员，那么当另外一个类型中也存在这样一个private (或protected)成员， 
+        并且它们都是来自同一处声明时，那么这两个类型是兼容的，否则是不兼容的。
+
+    4.基本类型：
+        4.1 布尔值 boolean
+            let b : boolean =  false;
+        4.2 数字 number
+        4.3 字符串 string
+        4.4 数组 
+            TypeScript像JavaScript一样可以操作数组元素。 有两种方式可以定义数组。 第一种，可以在元素类型后面接上[]，表示由此类型元素组成的一个数组：
+            let list: number[] = [1, 2, 3];
+            第二种方式是使用数组泛型，Array<元素类型>：
+            let list: Array<number> = [1, 2, 3];
+        4.5 元组 Tuple
+            元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。 比如，你可以定义一对值分别为string和number类型的元组。
+            let x:[string,number] = ['test',10];
+            如果类型没有对应的话：
+            let x1:[string,number] = [10,'test'];  则会报错：不能将类型“[number, string]”分配给类型“[string, number]”。不能将类型“number”分配给类型“string”。
+        4.6 枚举
+            enum类型是对JavaScript标准数据类型的一个补充。 像C#等其它语言一样，使用枚举类型可以为一组数值赋予友好的名字。
+        4.7 任意值
+            any标记变量，不严格区分类型
+        4.8 空值
+            某种程度上来说，void类型像是与any类型相反，它表示没有任何类型。
+        4.9 Never
+            never类型表示的是那些永不存在的值的类型。 例如，never类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型； 变量也可能是never类型，当它们被永不为真的类型保护所约束时。
+        4.10  Object
+            object表示非原始类型，也就是除number，string，boolean，symbol，null或undefined之外的类型。使用object类型，就可以更好的表示像Object.create这样的API。
+        4.11  类型断言
+            类型断言有两种形式。 其一是“尖括号”语法：
+                let someValue: any = "this is a string";
+                let strLength: number = (<string>someValue).length;
+            另一个为as语法：
+                let someValue: any = "this is a string";
+                let strLength: number = (someValue as string).length;
+

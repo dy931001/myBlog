@@ -1,0 +1,152 @@
+
+变量声明
+
+1.  var声明
+    function f(shouldInitialize: boolean) {
+        if (shouldInitialize) {
+            var x = 10;
+        }
+        return x;
+    }
+    f(true);  // returns '10'
+    f(false); // returns 'undefined'
+    变量x是定义在*if语句里面*，但是我们却可以在语句的外面访问它。 这是因为var声明可以在包含它的函数，模块，命名空间或全局作用域内部任何位置被访问（我们后面会详细介绍），
+    包含它的代码块对此没有什么影响。 有些人称此为*var作用域或函数作用域*。 函数参数也使用函数作用域。
+
+    for (var i = 0; i < 10; i++) {
+        setTimeout(function() { console.log(i); }, 100 * i);
+    }
+    输出10的原因是 我们传给setTimeout的每一个函数表达式实际上都引用了相同作用域里的同一个i。通常的解决方案是将setTimeout函数外面包裹一个立即执行函数。
+    for (var i = 0; i < 10; i++) {
+        // capture the current state of 'i'
+        // by invoking a function with its current value
+        (function(i) {
+            setTimeout(function() { console.log(i); }, 100 * i);
+        })(i);
+    }
+
+2.  let声明
+    2.1 块作用域
+        当用let声明一个变量，它使用的是词法作用域或块作用域。 不同于使用var声明的变量那样可以在包含它们的函数外访问，块作用域变量在包含它们的块或for循环之外是不能访问的。
+        拥有块级作用域的变量的另一个特点是，它们不能在被声明之前读或写。 虽然这些变量始终“存在”于它们的作用域里，但在直到声明它的代码之前的区域都属于暂时性死区。 
+        它只是用来说明我们不能在let语句之前访问它们，幸运的是TypeScript可以告诉我们这些信息。
+    2.2 重定义及屏蔽
+        let不允许在一个作用域里多次声明同一个变量
+        在一个嵌套作用域里引入一个新名字的行为称做屏蔽
+    2.3 块级作用域变量的获取
+        当let声明出现在循环体里时拥有完全不同的行为。 不仅是在循环里引入了一个新的变量环境，而是针对每次迭代都会创建这样一个新作用域。 这就是我们在使用立即执行的函数表达式时做的事，
+        所以在setTimeout例子里我们仅使用let声明就可以了。
+        for (let i = 0; i < 10 ; i++) {
+            setTimeout(function() {console.log(i); }, 100 * i);
+        }
+3.  const声明
+    它们与let声明相似，但是就像它的名字所表达的，它们被赋值后不能再改变。 换句话说，它们拥有与let相同的作用域规则，但是不能对它们重新赋值。
+4.  解构
+    数组、对象、函数
+5.  接口
+    TypeScript的核心原则之一是对值所具有的结构进行类型检查。 它有时被称做“鸭式辨型法”或“结构性子类型化”。 在TypeScript里，接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。
+    类型检查器不会去检查属性的顺序，只要相应的属性存在并且类型也是对的就可以。
+    5.1 可选属性
+        接口里的属性不全都是必需的。 有些是只在某些条件下存在，或者根本不存在。 可选属性在应用“option bags”模式时很常用，即给函数传入的参数对象中只有部分属性赋值了。
+        (个人理解：接口的意义在于更能规范化的使用对象的参数，必传和可选参数较JavaScript有了明确的定义，便于多人开发的协作)
+        可选属性的好处之一是可以对可能存在的属性进行预定义，好处之二是可以捕获引用了不存在的属性时的错误。
+        interface People {
+            car ? : string;
+            house ? : boolean;
+            name : string;
+            age : number
+        }
+        let p = (config:People) => {
+            console.log(config);
+        }
+        let np = {house:false,name:'li',age:25};
+        p(np);
+
+    5.2 只读属性
+        interface readOnly {
+            readonly x: string;
+        }
+
+        let o : readOnly = {x:'93'};
+        这个时候再去对x赋值则会报错提示：[ts] 无法分配到“x”，因为它是常数或只读属性。
+
+        TypeScript具有ReadonlyArray<T>类型，它与Array<T>相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改：
+        let a: number[] = [1, 2, 3, 4];
+        let ro: ReadonlyArray<number> = a;
+        ro[0] = 12; // error!
+        ro.push(5); // error!
+        ro.length = 100; // error!
+        a = ro; // error!
+
+        最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用const，若做为属性则使用readonly。
+    5.3 额外的属性检查
+    5.4 函数类型
+        为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+        对于函数类型的类型检查来说，函数的参数名不需要与接口里定义的名字相匹配。
+        函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。
+        interface SearchFunc {
+            (source: string, subString: string): boolean;
+        }
+        let mySearch: SearchFunc;
+            mySearch = function(source: string, subString: string) {
+            let result = source.search(subString);
+            return result > -1;
+        }
+    5.5 可索引的类型
+    5.6 类类型
+        与C#或Java里接口的基本作用一样，TypeScript也能够用它来明确的强制一个类去符合某种契约
+        interface ClockInterface {
+            currentTime: Date;
+            setTime(d: Date);
+        }
+
+        class Clock implements ClockInterface {
+            currentTime: Date;
+            setTime(d: Date) {
+                this.currentTime = d;
+            }
+            constructor(h: number, m: number) { }
+        }
+    5.7 类静态部分与实例部分的区别
+    5.8 继承接口
+        和类一样，接口也可以相互继承。这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
+        interface Animal{
+            name : string;
+            age : number;
+        }
+
+        interface Person extends Animal {
+            address : string;
+            car : boolean;
+        }
+
+        let p = <Person>{};
+        p.car = false;
+        p.address = 'beijing';
+        p.age = 18;
+        p.name = 'li';
+        一个接口可以继承多个接口，创建出多个接口的合成接口。
+    5.9 混合类型
+        先前我们提过，接口能够描述JavaScript里丰富的类型。 因为JavaScript其动态灵活的特点，有时你会希望一个对象可以同时具有上面提到的多种类型。
+        interface Counter {
+            (start: number): string;
+            interval: number;
+            reset(): void;
+        }
+
+        function getCounter(): Counter {
+            let counter = <Counter>function (start: number): string { return '' };
+            counter.interval = 123;
+            counter.reset = function () { };
+            return counter;
+        }
+
+        let c = getCounter();
+        c(10);
+        c.reset();
+        c.interval = 5.0;
+    5.10 接口继承类
+        当接口继承了一个类类型时，它会继承类的成员但不包括其实现。 就好像接口声明了所有类中存在的成员，但并没有提供具体实现一样。 接口同样会继承到类的private和protected成员。 
+        这意味着当你创建了一个接口继承了一个拥有私有或受保护的成员的类时，这个接口类型只能被这个类或其子类所实现（implement）。
+          
+
