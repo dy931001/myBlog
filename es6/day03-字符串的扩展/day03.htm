@@ -8,16 +8,21 @@
 	
 	<script type="text/javascript">
 		
-		let a = (...arg) => {
-			console.log(arg)
+		let a = (v) => {
+			if(v.includes('?')){
+				let p = v.slice(v.indexOf('?')+1,v.length).split('&');
+				let o = {};
+				for(let i = 0;i<p.length;i++){
+					let n = p[i].split('=');
+					o[n[0]] = n[1];
+				}
+				return o ;
+			}else{
+				return {};
+			}
 		}
 
-		a(1,2,3)
-
-
-		let b = [1,2,3,4];
-
-		console.log(...b)
+		console.log(a('https://www.hello.vip/web/preview.html?hashID=6d858e22144ad0874e9787a6adf0f435&tokenID=0de662afe67b89311e832823dcea9a7a#/LoginIndex'))
 
 	</script>
 </body>
