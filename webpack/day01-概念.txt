@@ -1,0 +1,94 @@
+:https://www.webpackjs.com/concepts/
+
+1.概念
+	本质上，webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)。当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块，然后将所有这些模块打包成一个或多个 bundle。
+
+	1.1 入口(entry)
+		入口起点(entrypoint)指示webpack应该使用哪个模块，来作为构建其内部依赖图的开始。进入入口起点后，webpack会找出有哪些模块和库是入口起点（直接和间接）依赖的。
+		可以通过在 webpack 配置中配置 entry 属性，来指定一个入口起点（或多个入口起点）。默认值为 ./src。
+	1.2 出口(output)
+		output 属性告诉 webpack 在哪里输出它所创建的 bundles，以及如何命名这些文件，默认值为 ./dist。基本上，整个应用程序结构，都会被编译到你指定的输出路径的文件夹中。你可以通过在配置中指定一个 output 字段，来配置这些处理过程
+
+		const path = require('path');
+
+		module.exports = {
+		  entry: './path/to/my/entry/file.js',
+		  output: {
+		    path: path.resolve(__dirname, 'dist'),
+		    filename: 'my-first-webpack.bundle.js'
+		  }
+		};
+
+		在上面的示例中，我们通过 output.filename 和 output.path 属性，来告诉 webpack bundle 的名称，以及我们想要 bundle 生成(emit)到哪里
+
+
+
+2.生成Source Maps（使调试更容易）
+
+	通过简单的配置，webpack就可以在打包时为我们生成的source maps，这为我们提供了一种对应编译文件和源文件的方法，使得编译后的代码可读性更高，也更容易调试。
+
+	在webpack的配置文件中配置source maps，需要配置devtool
+
+
+3.Loaders
+	通过使用不同的loader，webpack有能力调用外部的脚本或工具，实现对不同格式的文件的处理
+
+	Loaders需要单独安装并且需要在webpack.config.js中的modules关键字下进行配置，Loaders的配置包括以下几方面：
+	
+		test：一个用以匹配loaders所处理文件的拓展名的正则表达式（必须）
+		loader：loader的名称（必须）
+		include/exclude:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）；
+		query：为loaders提供额外的设置选项（可选）
+
+4.Babel
+
+	Babel其实是一个编译JavaScript的平台，它可以编译代码帮你达到以下目的：
+
+		让你能使用最新的JavaScript代码（ES6，ES7...），而不用管新标准是否被当前使用的浏览器完全支持；
+		让你能使用基于JavaScript进行了拓展的语言，比如React的JSX；
+
+	Babel的配置
+
+		Babel其实可以完全在 webpack.config.js 中进行配置，但是考虑到babel具有非常多的配置选项，在单一的webpack.config.js文件中进行配置往往使得这个文件显得太复杂，因此一些开发者支持把babel的配置选项放在一个单独的名为 ".babelrc" 的配置文件中。我们现在的babel的配置并不算复杂，不过之后我们会再加一些东西，因此现在我们就提取出相关部分，分两个配置文件进行配置（webpack会自动调用.babelrc里的babel配置选项）
+
+5.一切皆模块
+	
+	Webpack有一个不可不说的优点，它把所有的文件都都当做模块处理，JavaScript代码，CSS和fonts以及图片等等通过合适的loader都可以被处理。
+
+	css:css-loader使你能够使用类似@import和url(...)的方法实现require()的功能,style-loader将所有的计算后的样式加入页面中，二者组合在一起使你能够把样式表嵌入webpack打包后的JS文件中。
+
+	CSS module:
+		被称为CSSmodules的技术意在把JS的模块化思想带入CSS中来，通过CSS模块，所有的类名，动画名默认都只作用于当前模块。Webpack对CSS模块化提供了非常好的支持，只需要在CSS loader中进行简单配置即可，然后就可以直接把CSS的类名传递到组件的代码中，这样做有效避免了全局污染。
+
+
+6.插件（Plugins）
+	
+	插件（Plugins）是用来拓展Webpack功能的，它们会在整个构建过程中生效，执行相关的任务。
+
+	Loaders和Plugins常常被弄混，但是他们其实是完全不同的东西，可以这么来说，loaders是在打包构建过程中用来处理源文件的（JSX，Scss，Less..），一次处理一个，插件并不直接操作单个文件，它直接对整个构建过程其作用
+
+	要使用某个插件，我们需要通过npm安装它，然后要做的就是在webpack配置中的plugins关键字部分添加该插件的一个实例
+
+	常用的插件:
+
+		HtmlWebpackPlugin:
+
+
+7.产品阶段的构建
+	
+	在产品阶段，可能还需要对打包的文件进行额外的处理，比如说优化，压缩，缓存以及分离CSS和JS。
+
+	对于复杂的项目来说，需要复杂的配置，这时候分解配置文件为多个小的文件可以使得事情井井有条
+
+	devtool: 'null', //注意修改了这里，这能大大压缩我们的打包代码
+
+	缓存：缓存无处不在，使用缓存的最好方法是保证你的文件名和文件内容是匹配的（内容改变，名称相应改变）
+	webpack可以把一个哈希值添加到打包的文件名中，使用方法如下,添加特殊的字符串混合体（[name], [id] and [hash]）到输出文件名前   filename: "bundle-[hash].js"
+
+	去除build文件中的残余文件：添加了hash之后，会导致改变文件内容后重新打包时，文件名不同而内容越来越多，因此这里介绍另外一个很好用的插件clean-webpack-plugin。
+	使用：
+		new CleanWebpackPlugin('build/*.*', {
+		    root: __dirname,
+		    verbose: true,
+		    dry: false
+		})
