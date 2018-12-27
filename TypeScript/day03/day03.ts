@@ -11,7 +11,7 @@ class Greeter{
 
 let g = new Greeter('li');
 
-g.getGreet();
+g.getGreet(); 
 
 //继承
 
